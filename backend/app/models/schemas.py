@@ -82,10 +82,42 @@ class TradeRecord(BaseModel):
 
 class BacktestResult(BaseModel):
     id: str
+    symbol: str
+    interval: str
+    market_type: str
+    from_date: date
+    to_date: date
     summary: BacktestSummary
     equity_curve: list[dict[str, Any]]
     drawdown_series: list[dict[str, Any]]
     trades: list[TradeRecord]
+
+
+class CustomFactor(BaseModel):
+    id: str
+    name: str
+    category: str
+    description: str
+    mode: str
+    code: str
+    created_at: str
+    updated_at: str
+
+
+class CustomFactorCreate(BaseModel):
+    name: str
+    category: str = "自定义"
+    description: str = ""
+    mode: str = "python"
+    code: str
+
+
+class CustomFactorUpdate(BaseModel):
+    name: str | None = None
+    category: str | None = None
+    description: str | None = None
+    mode: str | None = None
+    code: str | None = None
 
 
 class StrategyConfig(BaseModel):
@@ -99,6 +131,9 @@ class StrategyConfig(BaseModel):
     initial_capital: float = Field(default=10000.0, gt=0.0)
     fee_rate: float = Field(default=0.002, ge=0.0)
     slippage: float = Field(default=0.0005, ge=0.0)
+    stop_loss: float = Field(default=0.0, ge=0.0)
+    take_profit: float = Field(default=0.0, ge=0.0)
+    max_holding_bars: int = Field(default=0, ge=0)
 
 
 class StrategyCreate(BaseModel):

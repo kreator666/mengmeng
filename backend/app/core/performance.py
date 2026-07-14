@@ -6,11 +6,12 @@ import pandas as pd
 
 
 def extract_trades(df: pd.DataFrame) -> list[dict[str, Any]]:
-    """从仓位变化中提取交易记录"""
+    """从仓位变化中提取交易记录（支持止损/止盈出场价）"""
     trades = []
     position = df["position"]
     price = df["close"]
     timestamp = df["timestamp"]
+    exit_price_col = df.get("exit_price")
 
     entry_time = None
     entry_price = 0.0
@@ -19,18 +20,25 @@ def extract_trades(df: pd.DataFrame) -> list[dict[str, Any]]:
     for i in range(len(df)):
         current_pos = position.iloc[i]
         prev_pos = position.iloc[i - 1] if i > 0 else 0.0
+        has_exit_price = exit_price_col is not None and not pd.isna(exit_price_col.iloc[i])
 
-        if prev_pos == 0 and current_pos > 0:
+        # 入场检测
+        if entry_time is None and prev_pos == 0 and current_pos > 0:
             entry_time = timestamp.iloc[i]
             entry_price = price.iloc[i]
             side = "long"
-        elif prev_pos == 0 and current_pos < 0:
+        elif entry_time is None and prev_pos == 0 and current_pos < 0:
             entry_time = timestamp.iloc[i]
             entry_price = price.iloc[i]
             side = "short"
-        elif prev_pos != 0 and current_pos == 0 and entry_time is not None:
+
+        # 出场检测：仓位归零 或 当前 K 线带有止损/止盈出场价
+        if entry_time is not None and (current_pos == 0 or has_exit_price):
             exit_time = timestamp.iloc[i]
-            exit_price = price.iloc[i]
+            if has_exit_price:
+                exit_price = exit_price_col.iloc[i]
+            else:
+                exit_price = price.iloc[i]
             if side == "long":
                 pnl = (exit_price - entry_price) / entry_price
             else:

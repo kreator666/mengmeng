@@ -42,6 +42,7 @@ class SafePythonExecutor:
         ast.AnnAssign,
         ast.arguments,
         ast.arg,
+        ast.keyword,
         ast.Add,
         ast.Sub,
         ast.Mult,
@@ -239,6 +240,9 @@ def build_builtin_namespace(df: pd.DataFrame) -> dict:
         "volume": volume,
         "np": np,
         "pd": pd,
+        "int": int,
+        "float": float,
+        "bool": bool,
     }
     return namespace
 
@@ -282,12 +286,13 @@ def eval_python_code(df: pd.DataFrame, code: str) -> pd.Series:
         if not isinstance(node, SafePythonExecutor.ALLOWED_NODES):
             raise FactorEngineError(f"不允许的语法: {type(node).__name__}")
 
-    exec(compile(tree, filename="<user_factor>", mode="exec"), {"__builtins__": {}}, ns)
+    globals_ns = {**ns, "__builtins__": {}}
+    exec(compile(tree, filename="<user_factor>", mode="exec"), globals_ns)
 
-    if "factor" not in ns or not callable(ns["factor"]):
+    if "factor" not in globals_ns or not callable(globals_ns["factor"]):
         raise FactorEngineError("用户代码必须定义 factor(df) 函数")
 
-    result = ns["factor"](df)
+    result = globals_ns["factor"](df)
     if not isinstance(result, pd.Series):
         raise FactorEngineError("factor(df) 必须返回 pandas.Series")
     return result

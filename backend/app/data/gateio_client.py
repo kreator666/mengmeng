@@ -52,9 +52,19 @@ class GateIOClient:
     async def _request(self, method: str, path: str, params: dict | None = None) -> Any:
         session = await self._get_session()
         url = f"{self.base_url}{path}"
-        async with session.request(method, url, params=params) as response:
-            response.raise_for_status()
-            return await response.json()
+        try:
+            async with session.request(method, url, params=params) as response:
+                if response.status != 200:
+                    text = await response.text()
+                    raise Exception(
+                        f"Gate.io API 请求失败: {response.status} {response.reason}, "
+                        f"url={url}, params={params}, response={text[:200]}"
+                    )
+                return await response.json()
+        except aiohttp.ClientConnectionError as e:
+            raise Exception(f"连接 Gate.io 失败，请检查网络: {type(e).__name__}: {e}") from e
+        except aiohttp.ClientError as e:
+            raise Exception(f"请求 Gate.io 异常: {type(e).__name__}: {e}") from e
 
     async def fetch_klines(
         self,
@@ -66,7 +76,9 @@ class GateIOClient:
     ) -> pd.DataFrame:
         """
         按需拉取 K 线数据，自动处理分页
-        使用 from + limit 方式分页，避免 from/to 互斥问题
+
+        - 现货：使用 from + limit 分页
+        - 合约：Gate.io 合约接口中 limit 与 from/to 互斥，使用 from + to 分页
         """
         from_ts = to_unix_timestamp(start_time)
         to_ts = to_unix_timestamp(end_time)
@@ -75,11 +87,13 @@ class GateIOClient:
             page_size = SPOT_PAGE_SIZE
             endpoint = SPOT_KLINES_ENDPOINT
             params_key = "currency_pair"
+            use_limit = True
         else:
             page_size = FUTURES_PAGE_SIZE
             settle = "usdt" if market_type == MarketType.FUTURES_USDT else "btc"
             endpoint = FUTURES_KLINES_ENDPOINT.format(settle=settle)
             params_key = "contract"
+            use_limit = False
 
         interval_sec = INTERVAL_SECONDS.get(interval.value, 3600)
         all_data: list[list[Any]] = []
@@ -90,17 +104,27 @@ class GateIOClient:
             if current_from >= to_ts:
                 break
 
-            params = {
-                params_key: symbol,
-                "interval": interval.value,
-                "from": current_from,
-                "limit": page_size,
-            }
+            if use_limit:
+                params = {
+                    params_key: symbol,
+                    "interval": interval.value,
+                    "from": current_from,
+                    "limit": page_size,
+                }
+            else:
+                # 合约：按 page_size 切分时间窗口
+                page_to = min(current_from + page_size * interval_sec, to_ts)
+                params = {
+                    params_key: symbol,
+                    "interval": interval.value,
+                    "from": current_from,
+                    "to": page_to,
+                }
 
             try:
                 batch = await self._request("GET", endpoint, params)
-            except aiohttp.ClientResponseError as e:
-                if e.status == 429:
+            except Exception as e:
+                if "429" in str(e):
                     await asyncio.sleep(1)
                     continue
                 raise
@@ -108,10 +132,12 @@ class GateIOClient:
             if not batch:
                 break
 
-            all_data.extend(batch)
+            # 统一格式：现货返回列表，合约返回字典列表
+            normalized_batch = self._normalize_kline_batch(batch, market_type)
+            all_data.extend(normalized_batch)
 
             # 计算下一页起点
-            last_ts = int(batch[-1][0])
+            last_ts = int(normalized_batch[-1][0])
             next_from = last_ts + interval_sec
             if next_from <= current_from:
                 break
@@ -134,6 +160,33 @@ class GateIOClient:
             end_ts = end_ts.tz_localize("UTC")
         df = df[(df["timestamp"] >= start_ts) & (df["timestamp"] <= end_ts)]
         return df.reset_index(drop=True)
+
+    def _normalize_kline_batch(
+        self, batch: list[Any], market_type: MarketType
+    ) -> list[list[Any]]:
+        """
+        将 Gate.io 不同接口返回的 K 线数据统一为 [timestamp, volume, close, high, low, open] 列表
+        """
+        if not batch:
+            return []
+
+        # 现货返回的是列表：[[t, v, c, h, l, o], ...]
+        if market_type == MarketType.SPOT:
+            return batch
+
+        # 合约返回的是字典列表：[{"t": ..., "v": ..., "c": ..., "h": ..., "l": ..., "o": ...}, ...]
+        normalized = []
+        for item in batch:
+            if isinstance(item, dict):
+                normalized.append([
+                    item.get("t"),
+                    item.get("v"),
+                    item.get("c"),
+                    item.get("h"),
+                    item.get("l"),
+                    item.get("o"),
+                ])
+        return normalized
 
     async def get_spot_symbols(self) -> list[dict[str, Any]]:
         """获取现货交易对列表"""

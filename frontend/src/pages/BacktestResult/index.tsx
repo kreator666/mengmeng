@@ -132,13 +132,25 @@ export default function BacktestResult() {
     if (!result) return;
     try {
       const trades = result.trades;
-      if (!trades.length) return;
+      if (!trades.length) {
+        // 没有交易记录时，使用回测的完整时间范围
+        const data = await dataApi.getKlines({
+          symbol: result.symbol,
+          interval: result.interval,
+          market_type: result.market_type,
+          from: result.from_date.slice(0, 10),
+          to: result.to_date.slice(0, 10),
+        });
+        setKlines(data);
+        return;
+      }
+
       const start = trades[0].entry_time.slice(0, 10);
       const end = trades[trades.length - 1].exit_time.slice(0, 10);
       const data = await dataApi.getKlines({
-        symbol: 'BTC_USDT',
-        interval: '4h',
-        market_type: 'spot',
+        symbol: result.symbol,
+        interval: result.interval,
+        market_type: result.market_type,
         from: start,
         to: end,
       });

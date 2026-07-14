@@ -17,7 +17,7 @@ import dayjs from 'dayjs';
 
 const { RangePicker } = DatePicker;
 import { backtestApi, dataApi, factorApi } from '../../services/api';
-import type { FactorInfo, SymbolInfo } from '../../types';
+import type { CustomFactor, FactorInfo, SymbolInfo } from '../../types';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -31,7 +31,6 @@ const intervals = [
 const marketTypes = [
   { value: 'spot', label: '现货' },
   { value: 'futures_usdt', label: 'USDT 合约' },
-  { value: 'futures_btc', label: 'BTC 合约' },
 ];
 
 const positionModes = [
@@ -44,6 +43,7 @@ export default function StrategyConfig() {
   const [form] = Form.useForm();
   const [symbols, setSymbols] = useState<SymbolInfo[]>([]);
   const [factors, setFactors] = useState<FactorInfo[]>([]);
+  const [customFactors, setCustomFactors] = useState<CustomFactor[]>([]);
   const [loadingSymbols, setLoadingSymbols] = useState(false);
   const [running, setRunning] = useState(false);
   const [factorMode, setFactorMode] = useState<'formula' | 'python'>('formula');
@@ -67,10 +67,14 @@ export default function StrategyConfig() {
 
   const loadFactors = async () => {
     try {
-      const data = await factorApi.getBuiltins();
-      setFactors(data);
+      const [builtins, customs] = await Promise.all([
+        factorApi.getBuiltins(),
+        factorApi.getCustomFactors(),
+      ]);
+      setFactors(builtins);
+      setCustomFactors(customs);
     } catch (err) {
-      message.error('获取内置因子失败');
+      message.error('获取因子失败');
     }
   };
 
@@ -78,6 +82,19 @@ export default function StrategyConfig() {
     const current = form.getFieldValue('factor_expression') || '';
     form.setFieldsValue({ factor_expression: current ? `${current} ${signature}` : signature });
   };
+
+  const handleInsertCustomFactor = (factorId: string) => {
+    const factor = customFactors.find((f) => f.id === factorId);
+    if (!factor) return;
+
+    if (factor.mode === 'formula') {
+      form.setFieldsValue({ factor_expression: factor.code });
+    } else {
+      form.setFieldsValue({ factor_code: factor.code });
+    }
+  };
+
+  const filteredCustomFactors = customFactors.filter((f) => f.mode === factorMode);
 
   const handleRun = async (values: any) => {
     setRunning(true);
@@ -95,6 +112,9 @@ export default function StrategyConfig() {
         initial_capital: values.initial_capital,
         fee_rate: values.fee_rate,
         slippage: values.slippage,
+        stop_loss: values.stop_loss,
+        take_profit: values.take_profit,
+        max_holding_bars: values.max_holding_bars,
       };
 
       const data = {
@@ -135,6 +155,9 @@ export default function StrategyConfig() {
           initial_capital: 10000,
           fee_rate: 0.002,
           slippage: 0.0005,
+          stop_loss: 0,
+          take_profit: 0,
+          max_holding_bars: 0,
           date_range: [dayjs().subtract(3, 'month'), dayjs()],
         }}
       >
@@ -215,13 +238,43 @@ export default function StrategyConfig() {
                   }))}
                 />
               </Form.Item>
+              {filteredCustomFactors.length > 0 && (
+                <Form.Item label="插入自定义公式因子">
+                  <Select
+                    placeholder="选择自定义因子"
+                    style={{ width: 280 }}
+                    onChange={handleInsertCustomFactor}
+                    allowClear
+                    options={filteredCustomFactors.map((f) => ({
+                      value: f.id,
+                      label: `${f.name}${f.description ? ` - ${f.description}` : ''}`,
+                    }))}
+                  />
+                </Form.Item>
+              )}
             </>
           )}
 
           {factorMode === 'python' && (
-            <Form.Item label="Python 代码" name="factor_code" rules={[{ required: true }]}>
-              <TextArea rows={10} placeholder="def factor(df): ..." />
-            </Form.Item>
+            <>
+              <Form.Item label="Python 代码" name="factor_code" rules={[{ required: true }]}>
+                <TextArea rows={10} placeholder="def factor(df): ..." />
+              </Form.Item>
+              {filteredCustomFactors.length > 0 && (
+                <Form.Item label="插入自定义 Python 因子">
+                  <Select
+                    placeholder="选择自定义因子"
+                    style={{ width: 280 }}
+                    onChange={handleInsertCustomFactor}
+                    allowClear
+                    options={filteredCustomFactors.map((f) => ({
+                      value: f.id,
+                      label: `${f.name}${f.description ? ` - ${f.description}` : ''}`,
+                    }))}
+                  />
+                </Form.Item>
+              )}
+            </>
           )}
         </Card>
 
@@ -251,6 +304,32 @@ export default function StrategyConfig() {
 
             <Form.Item label="滑点" name="slippage" rules={[{ required: true }]}>
               <InputNumber style={{ width: 160 }} min={0} step={0.0001} />
+            </Form.Item>
+
+            <Form.Item label="止损比例" name="stop_loss" rules={[{ required: true }]}>
+              <InputNumber
+                style={{ width: 160 }}
+                min={0}
+                max={1}
+                step={0.01}
+                formatter={(value) => `${(Number(value) * 100).toFixed(0)}%`}
+                parser={(value) => value?.replace('%', '') ? Number(value?.replace('%', '')) / 100 : 0}
+              />
+            </Form.Item>
+
+            <Form.Item label="止盈比例" name="take_profit" rules={[{ required: true }]}>
+              <InputNumber
+                style={{ width: 160 }}
+                min={0}
+                max={10}
+                step={0.01}
+                formatter={(value) => `${(Number(value) * 100).toFixed(0)}%`}
+                parser={(value) => value?.replace('%', '') ? Number(value?.replace('%', '')) / 100 : 0}
+              />
+            </Form.Item>
+
+            <Form.Item label="最大持仓(K线数)" name="max_holding_bars" rules={[{ required: true }]}>
+              <InputNumber style={{ width: 160 }} min={0} step={1} precision={0} />
             </Form.Item>
           </Space>
         </Card>

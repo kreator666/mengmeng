@@ -6,16 +6,16 @@ from fastapi import APIRouter, HTTPException
 
 from app.core.backtest_engine import vectorized_backtest
 from app.core.cost_model import CostModel
-from app.core.factor_engine import eval_formula
+from app.core.factor_engine import eval_formula, eval_python_code
 from app.core.performance import calculate_performance, extract_trades
 from app.data.cache_manager import CacheManager
+from app.data.result_store import BacktestResultStore
 from app.models.enums import MarketType, PositionMode
 from app.models.schemas import BacktestRequest, BacktestResult, BacktestSummary, TradeRecord
 
 router = APIRouter(prefix="/api/backtest", tags=["backtest"])
 
-# 内存中临时存储回测结果（后续可替换为数据库）
-_backtest_results: dict[str, dict] = {}
+_result_store = BacktestResultStore()
 
 
 @router.post("/run")
@@ -38,12 +38,18 @@ async def run_backtest(request: BacktestRequest):
     initial_capital = strategy.get("initial_capital", 10000.0)
     fee_rate = strategy.get("fee_rate", 0.002)
     slippage = strategy.get("slippage", 0.0005)
+    stop_loss = strategy.get("stop_loss", 0.0)
+    take_profit = strategy.get("take_profit", 0.0)
+    max_holding_bars = strategy.get("max_holding_bars", 0)
 
     manager = CacheManager()
     try:
         df = await manager.get_klines(symbol, interval, market_type, start, end)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"数据获取失败: {str(e)}")
+        import traceback
+        error_detail = f"数据获取失败: {type(e).__name__}: {str(e)}"
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=error_detail)
     finally:
         await manager.close()
 
@@ -55,8 +61,7 @@ async def run_backtest(request: BacktestRequest):
         if factor_mode == "formula":
             signal = eval_formula(df, expression)
         else:
-            # Python 代码模式，后续通过沙箱执行
-            signal = eval_formula(df, "close > 0")
+            signal = eval_python_code(df, code)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"因子计算失败: {str(e)}")
 
@@ -71,6 +76,9 @@ async def run_backtest(request: BacktestRequest):
         position_ratio=position_ratio,
         cost_model=cost_model,
         allow_short=allow_short,
+        stop_loss=stop_loss,
+        take_profit=take_profit,
+        max_holding_bars=max_holding_bars,
     )
 
     # 计算绩效与交易记录
@@ -96,6 +104,11 @@ async def run_backtest(request: BacktestRequest):
 
     result = BacktestResult(
         id=bt_id,
+        symbol=symbol,
+        interval=interval,
+        market_type=market_type.value,
+        from_date=data_params.from_date,
+        to_date=data_params.to_date,
         summary=BacktestSummary(**summary_dict),
         equity_curve=equity_curve,
         drawdown_series=drawdown_series,
@@ -111,35 +124,47 @@ async def run_backtest(request: BacktestRequest):
     def _clean_dict(d):
         return {k: _clean_value(v) for k, v in d.items()}
 
-    result_dict = result.model_dump()
+    # 返回给前端的 Pydantic 模型（FastAPI 自动序列化）
+    # 持久化存储需要 JSON 可序列化的字典
+    result_dict = result.model_dump(mode="json")
     result_dict["summary"] = _clean_dict(result_dict["summary"])
     result_dict["equity_curve"] = [{k: _clean_value(v) for k, v in r.items()} for r in result_dict["equity_curve"]]
     result_dict["drawdown_series"] = [{k: _clean_value(v) for k, v in r.items()} for r in result_dict["drawdown_series"]]
     result_dict["trades"] = [{k: _clean_value(v) for k, v in t.items()} for t in result_dict["trades"]]
 
-    _backtest_results[bt_id] = result_dict
+    _result_store.save(bt_id, result_dict)
     return result
+
+
+@router.get("")
+async def list_backtests(limit: int = 100):
+    """获取历史回测结果列表"""
+    results = _result_store.list(limit=limit)
+    return {"results": results}
 
 
 @router.get("/{id}")
 async def get_backtest(id: str):
     """获取回测结果"""
-    if id not in _backtest_results:
+    result = _result_store.get(id)
+    if not result:
         raise HTTPException(status_code=404, detail="回测结果不存在")
-    return _backtest_results[id]
+    return result
 
 
 @router.get("/{id}/equity")
 async def get_equity(id: str):
     """获取资金曲线"""
-    if id not in _backtest_results:
+    result = _result_store.get(id)
+    if not result:
         raise HTTPException(status_code=404, detail="回测结果不存在")
-    return _backtest_results[id]["equity_curve"]
+    return result["equity_curve"]
 
 
 @router.get("/{id}/trades")
 async def get_trades(id: str):
     """获取交易记录"""
-    if id not in _backtest_results:
+    result = _result_store.get(id)
+    if not result:
         raise HTTPException(status_code=404, detail="回测结果不存在")
-    return _backtest_results[id]["trades"]
+    return result["trades"]

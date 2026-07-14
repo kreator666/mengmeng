@@ -43,10 +43,17 @@ export interface TradeRecord {
 
 export interface BacktestResult {
   id: string;
+  symbol: string;
+  interval: string;
+  market_type: string;
+  from_date: string;
+  to_date: string;
   summary: BacktestSummary;
   equity_curve: { timestamp: string; equity: number }[];
   drawdown_series: { timestamp: string; drawdown: number }[];
   trades: TradeRecord[];
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface StrategyConfig {
@@ -59,6 +66,9 @@ export interface StrategyConfig {
   initial_capital: number;
   fee_rate: number;
   slippage: number;
+  stop_loss: number;
+  take_profit: number;
+  max_holding_bars: number;
 }
 
 export interface FactorInfo {
@@ -66,6 +76,17 @@ export interface FactorInfo {
   category: string;
   signature: string;
   description: string;
+}
+
+export interface CustomFactor {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  mode: 'formula' | 'python';
+  code: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface FactorEvalResult {
