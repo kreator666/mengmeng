@@ -3,7 +3,7 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from .enums import FactorMode, Interval, MarketType, PositionMode
+from .enums import FactorMode, Interval, MarketType, PositionMode, Provider
 
 
 class KlineRequest(BaseModel):
@@ -12,6 +12,7 @@ class KlineRequest(BaseModel):
     symbol: str = Field(..., description="交易对，如 BTC_USDT")
     interval: Interval = Field(default=Interval.ONE_HOUR)
     market_type: MarketType = Field(default=MarketType.SPOT)
+    provider: Provider = Field(default=Provider.GATEIO, description="行情数据源")
     from_date: date = Field(..., alias="from")
     to_date: date = Field(..., alias="to")
 
@@ -44,6 +45,7 @@ class FactorEvalRequest(BaseModel):
     symbol: str = Field(default="BTC_USDT")
     interval: Interval = Field(default=Interval.ONE_HOUR)
     market_type: MarketType = Field(default=MarketType.SPOT)
+    provider: Provider = Field(default=Provider.GATEIO, description="行情数据源")
     from_date: date = Field(default=date(2024, 1, 1), alias="from")
     to_date: date = Field(default=date(2024, 12, 31), alias="to")
 
@@ -85,6 +87,7 @@ class BacktestResult(BaseModel):
     symbol: str
     interval: str
     market_type: str
+    provider: str = Field(default="gateio", description="行情数据源")
     from_date: date
     to_date: date
     summary: BacktestSummary

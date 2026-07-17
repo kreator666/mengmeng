@@ -138,6 +138,7 @@ export default function BacktestResult() {
           symbol: result.symbol,
           interval: result.interval,
           market_type: result.market_type,
+          provider: result.provider || 'gateio',
           from: result.from_date.slice(0, 10),
           to: result.to_date.slice(0, 10),
         });
@@ -151,6 +152,7 @@ export default function BacktestResult() {
         symbol: result.symbol,
         interval: result.interval,
         market_type: result.market_type,
+        provider: result.provider || 'gateio',
         from: start,
         to: end,
       });
@@ -193,6 +195,29 @@ export default function BacktestResult() {
   return (
     <div style={{ padding: 24 }}>
       <h1>回测结果</h1>
+
+      <Card title="回测信息" style={{ marginBottom: 24 }}>
+        <Row gutter={[16, 16]}>
+          <Col span={6}>
+            <Statistic title="交易对" value={result.symbol} />
+          </Col>
+          <Col span={6}>
+            <Statistic title="行情源" value={result.provider || 'gateio'} />
+          </Col>
+          <Col span={6}>
+            <Statistic title="市场类型" value={result.market_type === 'spot' ? '现货' : '合约'} />
+          </Col>
+          <Col span={6}>
+            <Statistic title="周期" value={result.interval} />
+          </Col>
+          <Col span={12}>
+            <Statistic
+              title="时间范围"
+              value={`${result.from_date.slice(0, 10)} ~ ${result.to_date.slice(0, 10)}`}
+            />
+          </Col>
+        </Row>
+      </Card>
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col span={6}>

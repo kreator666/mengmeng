@@ -46,6 +46,7 @@ export interface BacktestResult {
   symbol: string;
   interval: string;
   market_type: string;
+  provider?: string;
   from_date: string;
   to_date: string;
   summary: BacktestSummary;

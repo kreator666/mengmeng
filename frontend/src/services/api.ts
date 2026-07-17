@@ -9,13 +9,14 @@ const api = axios.create({
 });
 
 export const dataApi = {
-  getSymbols: (market_type: string = 'spot') =>
-    api.get<SymbolInfo[]>('/api/symbols', { params: { market_type } }).then((res) => res.data),
+  getSymbols: (market_type: string = 'spot', provider: string = 'gateio') =>
+    api.get<SymbolInfo[]>('/api/symbols', { params: { market_type, provider } }).then((res) => res.data),
 
   getKlines: (params: {
     symbol: string;
     interval: string;
     market_type: string;
+    provider: string;
     from: string;
     to: string;
   }) => api.get<KlineData[]>('/api/data/klines', { params }).then((res) => res.data),
@@ -50,6 +51,7 @@ export const factorApi = {
     symbol: string;
     interval: string;
     market_type: string;
+    provider: string;
     from: string;
     to: string;
   }) => api.post<FactorEvalResult>('/api/factor/eval', data).then((res) => res.data),

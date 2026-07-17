@@ -1,10 +1,11 @@
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any
 
 import aiohttp
 import pandas as pd
 
+from app.data.base_client import MarketDataClient
 from app.models.enums import Interval, MarketType
 from app.utils.helpers import normalize_ohlcv, to_unix_timestamp
 
@@ -32,8 +33,10 @@ INTERVAL_SECONDS = {
 }
 
 
-class GateIOClient:
+class GateIOClient(MarketDataClient):
     """Gate.io API v4 客户端"""
+
+    name = "gateio"
 
     def __init__(self, base_url: str = BASE_URL):
         self.base_url = base_url.rstrip("/")
@@ -190,8 +193,30 @@ class GateIOClient:
 
     async def get_spot_symbols(self) -> list[dict[str, Any]]:
         """获取现货交易对列表"""
-        return await self._request("GET", "/spot/currency_pairs")
+        raw = await self._request("GET", "/spot/currency_pairs")
+        return [
+            {
+                "symbol": item.get("id"),
+                "market_type": MarketType.SPOT.value,
+                "base": item.get("base"),
+                "quote": item.get("quote"),
+            }
+            for item in raw
+            if item.get("trade_status") == "tradable"
+        ]
 
-    async def get_futures_contracts(self, settle: str = "usdt") -> list[dict[str, Any]]:
+    async def get_futures_symbols(self, settle: str = "usdt") -> list[dict[str, Any]]:
         """获取合约交易对列表"""
-        return await self._request("GET", f"/futures/{settle}/contracts")
+        raw = await self._request("GET", f"/futures/{settle}/contracts")
+        market_type = (
+            MarketType.FUTURES_USDT if settle == "usdt" else MarketType.FUTURES_BTC
+        )
+        return [
+            {
+                "symbol": item.get("name"),
+                "market_type": market_type.value,
+                "base": item.get("base"),
+                "quote": item.get("quote"),
+            }
+            for item in raw
+        ]

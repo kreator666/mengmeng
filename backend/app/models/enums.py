@@ -1,6 +1,13 @@
 from enum import Enum
 
 
+class Provider(str, Enum):
+    """行情数据源"""
+
+    GATEIO = "gateio"
+    BINANCE = "binance"
+
+
 class MarketType(str, Enum):
     SPOT = "spot"
     FUTURES_USDT = "futures_usdt"
@@ -8,9 +15,15 @@ class MarketType(str, Enum):
 
 
 class Interval(str, Enum):
+    ONE_MINUTE = "1m"
+    FIVE_MINUTES = "5m"
+    FIFTEEN_MINUTES = "15m"
+    THIRTY_MINUTES = "30m"
     ONE_HOUR = "1h"
     FOUR_HOURS = "4h"
+    EIGHT_HOURS = "8h"
     ONE_DAY = "1d"
+    ONE_WEEK = "7d"
 
 
 class FactorMode(str, Enum):

@@ -3,10 +3,9 @@ from typing import Any
 
 import pandas as pd
 
+from app.data.client_factory import get_client
 from app.data.data_store import DataStore
-from app.data.gateio_client import GateIOClient
-from app.models.enums import Interval, MarketType
-from app.utils.helpers import to_unix_timestamp
+from app.models.enums import Interval, MarketType, Provider
 
 
 def _to_utc(dt: datetime) -> datetime:
@@ -19,11 +18,18 @@ def _to_utc(dt: datetime) -> datetime:
 class CacheManager:
     """
     K 线缓存管理器：缓存优先、按需补全
+    支持多 provider，缓存键包含 provider 维度
     """
 
-    def __init__(self, store: DataStore | None = None, client: GateIOClient | None = None):
+    def __init__(
+        self,
+        provider: Provider = Provider.GATEIO,
+        store: DataStore | None = None,
+        client: Any | None = None,
+    ):
+        self.provider = provider
         self.store = store or DataStore()
-        self.client = client or GateIOClient()
+        self.client = client or get_client(provider)
 
     def _cached_range(self, df: pd.DataFrame | None) -> tuple[datetime, datetime] | None:
         if df is None or df.empty:
@@ -59,7 +65,7 @@ class CacheManager:
         start_utc = _to_utc(start_time)
         end_utc = _to_utc(end_time)
 
-        cached_df = self.store.load(symbol, interval.value, market_type.value)
+        cached_df = self.store.load(symbol, interval.value, market_type.value, provider=self.provider.value)
         cached_range = self._cached_range(cached_df)
 
         # 情况 1：完全命中
@@ -70,7 +76,7 @@ class CacheManager:
         if cached_df is None or cached_df.empty:
             fetched_df = await self.client.fetch_klines(symbol, interval, market_type, start_utc, end_utc)
             if not fetched_df.empty:
-                self.store.save(fetched_df, symbol, interval.value, market_type.value)
+                self.store.save(fetched_df, symbol, interval.value, market_type.value, provider=self.provider.value)
             return fetched_df
 
         # 情况 3：部分缺失，需要补充
@@ -85,7 +91,7 @@ class CacheManager:
         if fetched_dfs:
             all_fetched = pd.concat(fetched_dfs, ignore_index=True)
             merged = self._merge_data(cached_df, all_fetched)
-            self.store.save(merged, symbol, interval.value, market_type.value)
+            self.store.save(merged, symbol, interval.value, market_type.value, provider=self.provider.value)
         else:
             merged = cached_df
 

@@ -10,7 +10,7 @@ from app.core.factor_engine import eval_formula, eval_python_code
 from app.core.performance import calculate_performance, extract_trades
 from app.data.cache_manager import CacheManager
 from app.data.result_store import BacktestResultStore
-from app.models.enums import MarketType, PositionMode
+from app.models.enums import MarketType, PositionMode, Provider
 from app.models.schemas import BacktestRequest, BacktestResult, BacktestSummary, TradeRecord
 
 router = APIRouter(prefix="/api/backtest", tags=["backtest"])
@@ -27,6 +27,7 @@ async def run_backtest(request: BacktestRequest):
     symbol = data_params.symbol.upper()
     interval = data_params.interval
     market_type = data_params.market_type
+    provider = data_params.provider or Provider.GATEIO
     start = datetime.combine(data_params.from_date, datetime.min.time())
     end = datetime.combine(data_params.to_date, datetime.max.time())
 
@@ -42,7 +43,7 @@ async def run_backtest(request: BacktestRequest):
     take_profit = strategy.get("take_profit", 0.0)
     max_holding_bars = strategy.get("max_holding_bars", 0)
 
-    manager = CacheManager()
+    manager = CacheManager(provider=provider)
     try:
         df = await manager.get_klines(symbol, interval, market_type, start, end)
     except Exception as e:
@@ -107,6 +108,7 @@ async def run_backtest(request: BacktestRequest):
         symbol=symbol,
         interval=interval,
         market_type=market_type.value,
+        provider=provider.value,
         from_date=data_params.from_date,
         to_date=data_params.to_date,
         summary=BacktestSummary(**summary_dict),

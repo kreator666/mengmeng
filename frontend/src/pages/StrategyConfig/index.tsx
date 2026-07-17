@@ -33,6 +33,11 @@ const marketTypes = [
   { value: 'futures_usdt', label: 'USDT 合约' },
 ];
 
+const providers = [
+  { value: 'gateio', label: 'Gate.io' },
+  { value: 'binance', label: 'Binance' },
+];
+
 const positionModes = [
   { value: 'fixed_ratio', label: '固定比例' },
   { value: 'fixed_amount', label: '固定金额' },
@@ -53,16 +58,38 @@ export default function StrategyConfig() {
     loadFactors();
   }, []);
 
-  const loadSymbols = async () => {
+  const loadSymbols = async (provider?: string, marketType?: string) => {
+    const currentProvider = provider || form.getFieldValue('provider') || 'gateio';
+    const currentMarketType = marketType || form.getFieldValue('market_type') || 'spot';
     setLoadingSymbols(true);
     try {
-      const data = await dataApi.getSymbols('spot');
-      setSymbols(data.slice(0, 100));
+      const data = await dataApi.getSymbols(currentMarketType, currentProvider);
+      // 将主流交易对置顶，其余按字母顺序排序，避免 slice 截断导致 BTC/ETH 不可见
+      const prioritized = ['BTC_USDT', 'ETH_USDT'];
+      const sorted = [...data].sort((a, b) => {
+        const idxA = prioritized.indexOf(a.symbol);
+        const idxB = prioritized.indexOf(b.symbol);
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1;
+        if (idxB !== -1) return 1;
+        return a.symbol.localeCompare(b.symbol);
+      });
+      setSymbols(sorted);
     } catch (err) {
       message.error('获取交易对失败');
     } finally {
       setLoadingSymbols(false);
     }
+  };
+
+  const handleProviderChange = async (provider: string) => {
+    form.setFieldsValue({ symbol: undefined });
+    await loadSymbols(provider);
+  };
+
+  const handleMarketTypeChange = async (marketType: string) => {
+    form.setFieldsValue({ symbol: undefined });
+    await loadSymbols(undefined, marketType);
   };
 
   const loadFactors = async () => {
@@ -121,6 +148,7 @@ export default function StrategyConfig() {
         symbol: values.symbol,
         interval: values.interval,
         market_type: values.market_type,
+        provider: values.provider,
         from: fromDate,
         to: toDate,
       };
@@ -146,6 +174,7 @@ export default function StrategyConfig() {
           name: '双均线金叉策略',
           symbol: 'BTC_USDT',
           market_type: 'spot',
+          provider: 'gateio',
           interval: '4h',
           factor_mode: 'formula',
           factor_expression: "AND(EMA(close, 12) > EMA(close, 26), RSI(close, 14) < 70)",
@@ -158,7 +187,7 @@ export default function StrategyConfig() {
           stop_loss: 0,
           take_profit: 0,
           max_holding_bars: 0,
-          date_range: [dayjs().subtract(3, 'month'), dayjs()],
+          date_range: [dayjs().subtract(1, 'year'), dayjs()],
         }}
       >
         <Card title="基本信息" style={{ marginBottom: 24 }}>
@@ -169,6 +198,16 @@ export default function StrategyConfig() {
 
         <Card title="交易设置" style={{ marginBottom: 24 }}>
           <Space style={{ display: 'flex', flexWrap: 'wrap' }}>
+            <Form.Item label="行情平台" name="provider" rules={[{ required: true }]}>
+              <Select style={{ width: 160 }} onChange={handleProviderChange}>
+                {providers.map((p) => (
+                  <Option key={p.value} value={p.value}>
+                    {p.label}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
             <Form.Item label="交易对" name="symbol" rules={[{ required: true }]}>
               <Select
                 showSearch
@@ -187,7 +226,7 @@ export default function StrategyConfig() {
             </Form.Item>
 
             <Form.Item label="市场类型" name="market_type" rules={[{ required: true }]}>
-              <Select style={{ width: 160 }}>
+              <Select style={{ width: 160 }} onChange={handleMarketTypeChange}>
                 {marketTypes.map((m) => (
                   <Option key={m.value} value={m.value}>
                     {m.label}
@@ -313,7 +352,10 @@ export default function StrategyConfig() {
                 max={1}
                 step={0.01}
                 formatter={(value) => `${(Number(value) * 100).toFixed(0)}%`}
-                parser={(value) => value?.replace('%', '') ? Number(value?.replace('%', '')) / 100 : 0}
+                parser={(value) => {
+                  const num = Number(value?.replace('%', ''));
+                  return (Number.isNaN(num) ? 0 : num / 100) as any;
+                }}
               />
             </Form.Item>
 
@@ -324,7 +366,10 @@ export default function StrategyConfig() {
                 max={10}
                 step={0.01}
                 formatter={(value) => `${(Number(value) * 100).toFixed(0)}%`}
-                parser={(value) => value?.replace('%', '') ? Number(value?.replace('%', '')) / 100 : 0}
+                parser={(value) => {
+                  const num = Number(value?.replace('%', ''));
+                  return (Number.isNaN(num) ? 0 : num / 100) as any;
+                }}
               />
             </Form.Item>
 

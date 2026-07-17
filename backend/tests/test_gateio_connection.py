@@ -30,7 +30,7 @@ async def test_connection():
         print("\n1. 测试获取现货交易对列表")
         symbols = await client.get_spot_symbols()
         print(f"   成功获取 {len(symbols)} 个交易对")
-        print(f"   前 3 个: {[s.get('id') for s in symbols[:3]]}")
+        print(f"   前 3 个: {[s.get('symbol') for s in symbols[:3]]}")
 
         print("\n2. 测试现货 K 线")
         await test_market(client, MarketType.SPOT, "现货 BTC_USDT 1h")

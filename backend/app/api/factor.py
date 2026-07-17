@@ -25,7 +25,7 @@ async def _load_data(params: FactorEvalRequest):
     """加载 K 线数据"""
     start = datetime.combine(params.from_date, datetime.min.time())
     end = datetime.combine(params.to_date, datetime.max.time())
-    manager = CacheManager()
+    manager = CacheManager(provider=params.provider)
     try:
         df = await manager.get_klines(params.symbol, params.interval, params.market_type, start, end)
     finally:
