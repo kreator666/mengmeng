@@ -1,0 +1,19 @@
+{
+  "heavy_keywords": [
+    "ipo delay", "ipo postpon", "delays ipo", "postpones ipo",
+    "openai funding", "funding round", "valuation cut", "down round",
+    "stargate", "fails to raise", "fundraise",
+    "推迟ipo", "ipo推迟", "上市推迟", "推迟上市", "融资失败", "估值下调", "星际之门"
+  ],
+  "negative_keywords": [
+    "slowing revenue", "revenue slowdown", "slowing growth",
+    "capex cut", "cuts capital expenditure", "capital spending cut",
+    "data center cancel", "cancels data center", "contract cancel",
+    "layoff", "guidance cut", "cuts guidance", "lowers guidance",
+    "debt concern", "bubble", "overvalued",
+    "营收放缓", "增长放缓", "削减资本开支", "缩减资本开支", "取消数据中心",
+    "合同取消", "裁员", "下调指引", "亏损扩大", "泡沫"
+  ],
+  "watch_keywords": ["openai", "anthropic"],
+  "_comment": "重磅词额外+5；负面词计入命中统计；watch 词用于把无 ticker 标记的文章归入链相关。全小写匹配（中文无大小写）。"
+}

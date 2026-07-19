@@ -1,0 +1,28 @@
+{
+  "news": {
+    "provider": "sina",
+    "_doc": "sina=新浪财经7x24（免费无需key，默认）；tiingo=Tiingo News（需付费权限，免费key会403）"
+  },
+  "scheduler": {
+    "enabled": true,
+    "hour": 5,
+    "minute": 30,
+    "timezone": "Asia/Shanghai",
+    "_doc": "每日定时扫描（美股收盘后）。冬令时可改为 6:30"
+  },
+  "smtp": {
+    "enabled": false,
+    "host": "smtp.qq.com",
+    "port": 465,
+    "username": "",
+    "password": "",
+    "from_addr": "",
+    "to_addrs": [],
+    "_doc": "QQ/163 邮箱用授权码作为 password；enabled=true 且字段齐全才启用"
+  },
+  "webhook": {
+    "enabled": false,
+    "url": "",
+    "_doc": "POST JSON {title, text}；Server酱/Bark/企业微信机器人把 url 换成对应地址即可"
+  }
+}

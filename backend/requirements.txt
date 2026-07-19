@@ -11,3 +11,5 @@ python-multipart>=0.0.9
 restrictedpython>=7.0
 sqlalchemy>=2.0.36
 scipy>=1.11.0
+apscheduler>=3.10.0
+python-docx>=1.1.0

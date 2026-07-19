@@ -48,4 +48,5 @@ data/*
 backend/venv/
 backend/data/cache/
 backend/data/us_stock_config.json
+backend/data/sentinel.db
 backend/server.log

@@ -5,6 +5,7 @@ import BacktestResult from './pages/BacktestResult';
 import StrategyList from './pages/StrategyList';
 import FactorLibrary from './pages/FactorLibrary';
 import SupportLevel from './pages/SupportLevel';
+import ChainSentinel from './pages/ChainSentinel';
 
 const { Header, Content } = Layout;
 
@@ -14,6 +15,7 @@ function App() {
     { key: 'list', label: <Link to="/strategies">策略列表</Link> },
     { key: 'factors', label: <Link to="/factors">因子库</Link> },
     { key: 'support', label: <Link to="/support-level">支撑位分析</Link> },
+    { key: 'chain-sentinel', label: <Link to="/chain-sentinel">链风险哨兵</Link> },
   ];
 
   return (
@@ -32,6 +34,7 @@ function App() {
             <Route path="/strategies" element={<StrategyList />} />
             <Route path="/factors" element={<FactorLibrary />} />
             <Route path="/support-level" element={<SupportLevel />} />
+            <Route path="/chain-sentinel" element={<ChainSentinel />} />
           </Routes>
         </Content>
       </Layout>
