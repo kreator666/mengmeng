@@ -92,10 +92,13 @@ if FRONTEND_DIST.is_dir():
 
     @app.get("/{full_path:path}", include_in_schema=False)
     async def spa_fallback(full_path: str):
-        """SPA 回退：文件存在则返回文件，否则返回 index.html"""
+        """SPA 回退：文件存在则返回文件，否则返回 index.html（禁缓存，避免旧入口引用已替换的构建产物）"""
         file = FRONTEND_DIST / full_path
         if full_path and file.is_file():
             return FileResponse(file)
-        return FileResponse(FRONTEND_DIST / "index.html")
+        return FileResponse(
+            FRONTEND_DIST / "index.html",
+            headers={"Cache-Control": "no-cache, must-revalidate"},
+        )
 else:
     print(f"[warn] 前端构建目录不存在: {FRONTEND_DIST}，仅提供 API 服务")
