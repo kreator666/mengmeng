@@ -4,6 +4,7 @@ import StrategyConfig from './pages/StrategyConfig';
 import BacktestResult from './pages/BacktestResult';
 import StrategyList from './pages/StrategyList';
 import FactorLibrary from './pages/FactorLibrary';
+import SupportLevel from './pages/SupportLevel';
 
 const { Header, Content } = Layout;
 
@@ -12,6 +13,7 @@ function App() {
     { key: 'config', label: <Link to="/">策略配置</Link> },
     { key: 'list', label: <Link to="/strategies">策略列表</Link> },
     { key: 'factors', label: <Link to="/factors">因子库</Link> },
+    { key: 'support', label: <Link to="/support-level">支撑位分析</Link> },
   ];
 
   return (
@@ -29,6 +31,7 @@ function App() {
             <Route path="/result/:id" element={<BacktestResult />} />
             <Route path="/strategies" element={<StrategyList />} />
             <Route path="/factors" element={<FactorLibrary />} />
+            <Route path="/support-level" element={<SupportLevel />} />
           </Routes>
         </Content>
       </Layout>

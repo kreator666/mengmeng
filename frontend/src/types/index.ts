@@ -12,6 +12,7 @@ export interface SymbolInfo {
   market_type: string;
   base: string;
   quote: string;
+  price_precision?: number;
 }
 
 export interface BacktestSummary {
@@ -94,4 +95,65 @@ export interface FactorEvalResult {
   signal: { timestamp: string; signal: number; position: number }[];
   ic: number;
   rolling_ic: { timestamp: string; ic: number | null }[];
+}
+
+export interface SupportLevelPoint {
+  timestamp: string;
+  support: number;
+  range_high: number;
+  range_low: number;
+}
+
+export interface SupportLevelEvent {
+  timestamp: string;
+  support: number;
+  touch_low: number;
+  entry_close: number;
+  max_bounce_pct: number;
+  status: 'bounced' | 'broke' | 'flat' | 'pending';
+}
+
+export interface SupportLevelStats {
+  total_touches: number;
+  bounced_count: number;
+  broke_count: number;
+  success_rate: number | null;
+  avg_bounce_pct: number | null;
+  max_bounce_pct: number | null;
+  current_support: number | null;
+  last_close: number;
+  distance_to_support_pct: number | null;
+}
+
+export interface SupportLevelAnalyzeResult {
+  symbol: string;
+  interval: string;
+  provider: string;
+  points: SupportLevelPoint[];
+  events: SupportLevelEvent[];
+  stats: SupportLevelStats;
+}
+
+export interface FibRange {
+  range_low: number;
+  range_high: number;
+  low_time: string | null;
+  high_time: string | null;
+  breakout_time: string | null;
+}
+
+export interface FibLevel {
+  ratio: number;
+  price: number;
+  kind: 'range' | 'extension';
+  visible: boolean;
+}
+
+export interface FibLevelsResult {
+  symbol: string;
+  interval: string;
+  provider: string;
+  range: FibRange;
+  levels: FibLevel[];
+  current_price: number;
 }

@@ -8,6 +8,10 @@ from app.models.schemas import KlineResponse
 
 router = APIRouter(tags=["data"])
 
+# 交易对列表内存缓存（Gate 全量列表接口很慢，~50s；列表变化不频繁，缓存 1 小时）
+_symbols_cache: dict[str, tuple[float, list]] = {}
+SYMBOLS_CACHE_TTL = 3600
+
 
 @router.get("/api/data/klines")
 async def get_klines(
@@ -48,7 +52,14 @@ async def get_symbols(
     market_type: MarketType = Query(default=MarketType.SPOT),
     provider: Provider = Query(default=Provider.GATEIO, description="行情数据源"),
 ):
-    """获取交易对列表"""
+    """获取交易对列表（1 小时内存缓存）"""
+    import time
+
+    cache_key = f"{provider.value}:{market_type.value}"
+    cached = _symbols_cache.get(cache_key)
+    if cached and time.time() - cached[0] < SYMBOLS_CACHE_TTL:
+        return cached[1]
+
     manager = CacheManager(provider=provider)
     try:
         if market_type == MarketType.SPOT:
@@ -61,4 +72,5 @@ async def get_symbols(
     finally:
         await manager.close()
 
+    _symbols_cache[cache_key] = (time.time(), symbols)
     return symbols

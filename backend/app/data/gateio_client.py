@@ -19,6 +19,16 @@ REQUEST_INTERVAL = 0.2  # 200ms
 
 COLUMN_ORDER = ["timestamp", "volume", "close", "high", "low", "open"]
 
+
+def _tick_to_decimals(tick: Any) -> int:
+    """将 tick 字符串（如 '0.0000001'、'0.05'）转换为小数位数"""
+    if not tick:
+        return 4
+    s = str(tick)
+    if "." in s:
+        return len(s.rstrip("0").split(".")[1])
+    return 0
+
 # 各周期对应的秒数
 INTERVAL_SECONDS = {
     "1m": 60,
@@ -26,11 +36,31 @@ INTERVAL_SECONDS = {
     "15m": 900,
     "30m": 1800,
     "1h": 3600,
+    "2h": 7200,
     "4h": 14400,
     "8h": 28800,
     "1d": 86400,
+    "3d": 259200,
     "7d": 604800,
+    "30d": 2592000,
 }
+
+
+def resample_to_quarter(df: pd.DataFrame) -> pd.DataFrame:
+    """将 30d K 线聚合为季线（3M），K 线时间戳取季度起始日"""
+    if df.empty:
+        return df
+    quarterly = (
+        df.set_index("timestamp")
+        .resample("QS")
+        .agg({"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"})
+        .dropna()
+        .reset_index()
+    )
+    quarterly["market_type"] = df["market_type"].iloc[0]
+    quarterly["symbol"] = df["symbol"].iloc[0]
+    quarterly["interval"] = "3M"
+    return quarterly
 
 
 class GateIOClient(MarketDataClient):
@@ -85,6 +115,13 @@ class GateIOClient(MarketDataClient):
         """
         from_ts = to_unix_timestamp(start_time)
         to_ts = to_unix_timestamp(end_time)
+
+        # 季线（3M）：Gate.io 无此周期，拉取月线（30d）后聚合
+        if interval == Interval.THREE_MONTHS:
+            monthly = await self.fetch_klines(
+                symbol, Interval.ONE_MONTH, market_type, start_time, end_time
+            )
+            return resample_to_quarter(monthly)
 
         if market_type == MarketType.SPOT:
             page_size = SPOT_PAGE_SIZE
@@ -200,6 +237,7 @@ class GateIOClient(MarketDataClient):
                 "market_type": MarketType.SPOT.value,
                 "base": item.get("base"),
                 "quote": item.get("quote"),
+                "price_precision": int(item.get("precision") or 4),
             }
             for item in raw
             if item.get("trade_status") == "tradable"
@@ -217,6 +255,7 @@ class GateIOClient(MarketDataClient):
                 "market_type": market_type.value,
                 "base": item.get("base"),
                 "quote": item.get("quote"),
+                "price_precision": _tick_to_decimals(item.get("order_price_round")),
             }
             for item in raw
         ]

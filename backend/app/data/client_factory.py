@@ -1,12 +1,14 @@
 from app.data.base_client import MarketDataClient
 from app.data.binance_client import BinanceClient
 from app.data.gateio_client import GateIOClient
+from app.data.us_stock_client import USStockClient
 from app.models.enums import Provider
 
 
 _CLIENTS: dict[Provider, type[MarketDataClient]] = {
     Provider.GATEIO: GateIOClient,
     Provider.BINANCE: BinanceClient,
+    Provider.US_STOCK: USStockClient,
 }
 
 

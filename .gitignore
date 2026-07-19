@@ -45,3 +45,7 @@ Thumbs.db
 # Project specific
 data/*
 !data/.gitkeep
+backend/venv/
+backend/data/cache/
+backend/data/us_stock_config.json
+backend/server.log

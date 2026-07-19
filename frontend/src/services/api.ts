@@ -1,11 +1,12 @@
 import axios from 'axios';
-import type { BacktestResult, CustomFactor, FactorEvalResult, FactorInfo, KlineData, SymbolInfo, TradeRecord } from '../types';
+import type { BacktestResult, CustomFactor, FactorEvalResult, FactorInfo, FibLevelsResult, KlineData, SupportLevelAnalyzeResult, SymbolInfo, TradeRecord } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+// 默认同源相对路径：生产由 FastAPI 托管前端与 API（单端口），开发走 vite proxy
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 60000,
+  timeout: 180000,
 });
 
 export const dataApi = {
@@ -72,6 +73,37 @@ export const backtestApi = {
 
   getTrades: (id: string) =>
     api.get<TradeRecord[]>(`/api/backtest/${id}/trades`).then((res) => res.data),
+};
+
+export const supportLevelApi = {
+  analyze: (params: {
+    symbol: string;
+    interval: string;
+    market_type: string;
+    provider: string;
+    from: string;
+    to: string;
+    lookback?: number;
+    min_range?: number;
+    touch_tolerance?: number;
+    break_tolerance?: number;
+    bounce_bars?: number;
+    bounce_threshold?: number;
+  }) => api.get<SupportLevelAnalyzeResult>('/api/support-level/analyze', { params }).then((res) => res.data),
+};
+
+export const fibApi = {
+  getFibLevels: (params: {
+    symbol: string;
+    interval: string;
+    market_type: string;
+    provider: string;
+    from?: string;
+    to?: string;
+    breakout_factor?: number;
+    fib_low?: number;
+    fib_high?: number;
+  }) => api.get<FibLevelsResult>('/api/fib-levels', { params }).then((res) => res.data),
 };
 
 export const strategyApi = {

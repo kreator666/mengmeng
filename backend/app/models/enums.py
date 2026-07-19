@@ -6,6 +6,7 @@ class Provider(str, Enum):
 
     GATEIO = "gateio"
     BINANCE = "binance"
+    US_STOCK = "us_stock"
 
 
 class MarketType(str, Enum):
@@ -20,10 +21,14 @@ class Interval(str, Enum):
     FIFTEEN_MINUTES = "15m"
     THIRTY_MINUTES = "30m"
     ONE_HOUR = "1h"
+    TWO_HOURS = "2h"
     FOUR_HOURS = "4h"
     EIGHT_HOURS = "8h"
     ONE_DAY = "1d"
+    THREE_DAYS = "3d"
     ONE_WEEK = "7d"
+    ONE_MONTH = "30d"
+    THREE_MONTHS = "3M"
 
 
 class FactorMode(str, Enum):

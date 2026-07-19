@@ -36,6 +36,7 @@ class SymbolInfo(BaseModel):
     market_type: MarketType
     base: str
     quote: str
+    price_precision: int = 4  # 价格小数位数（交易所精度）
 
 
 class FactorEvalRequest(BaseModel):
@@ -152,3 +153,64 @@ class StrategyResponse(BaseModel):
     config: StrategyConfig
     created_at: datetime
     updated_at: datetime
+
+
+class SupportLevelPoint(BaseModel):
+    timestamp: datetime
+    support: float
+    range_high: float
+    range_low: float
+
+
+class SupportLevelEvent(BaseModel):
+    timestamp: datetime
+    support: float
+    touch_low: float
+    entry_close: float
+    max_bounce_pct: float
+    status: Literal["bounced", "broke", "flat", "pending"]
+
+
+class SupportLevelStats(BaseModel):
+    total_touches: int
+    bounced_count: int
+    broke_count: int
+    success_rate: Optional[float]
+    avg_bounce_pct: Optional[float]
+    max_bounce_pct: Optional[float]
+    current_support: Optional[float]
+    last_close: float
+    distance_to_support_pct: Optional[float]
+
+
+class SupportLevelAnalyzeResponse(BaseModel):
+    symbol: str
+    interval: str
+    provider: str
+    points: list[SupportLevelPoint]
+    events: list[SupportLevelEvent]
+    stats: SupportLevelStats
+
+
+class FibRange(BaseModel):
+    range_low: float
+    range_high: float
+    low_time: Optional[datetime]
+    high_time: Optional[datetime]
+    breakout_time: Optional[datetime]
+
+
+class FibLevel(BaseModel):
+    ratio: float
+    price: float
+    kind: Literal["range", "extension"]
+    visible: bool
+
+
+class FibLevelsResponse(BaseModel):
+    symbol: str
+    interval: str
+    provider: str
+    range: FibRange
+    levels: list[FibLevel]
+    current_price: float
