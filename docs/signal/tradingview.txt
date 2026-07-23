@@ -1,0 +1,188 @@
+//@version=5
+indicator("Gap Zone Auto Marker (ATAS 移植版)", overlay=true, max_boxes_count=500, max_lines_count=500, max_labels_count=500)
+
+// 对齐 ATAS Gap Zone Auto Marker v1.0.5（反编译源码 reference/AtasGapZoneIndicator.cs）
+// 与通用缺口指标的关键差异：只认【趋势延续型】缺口——上跳要求前后两根皆阳线，下跳要求皆阴线；
+// 回补判定从缺口形成的【下一根】开始；中线为点线，已回补区域边框变虚线。
+
+// ==========================================
+// 1. Detection
+// ==========================================
+gp_det = "1. Detection"
+detMode    = input.string("Close to next open", "Gap boundary", options=["Close to next open", "Wick to wick"], group=gp_det)
+minGapTick = input.int(1, "Minimum gap ticks", minval=0, group=gp_det)
+maxGapTick = input.int(0, "Maximum gap ticks (0 = no limit)", minval=0, group=gp_det)
+fillPolicy = input.string("Full fill to prior edge", "Fill policy", options=["Full fill to prior edge", "Touch into gap"], group=gp_det)
+
+// ==========================================
+// 2. Display
+// ==========================================
+gp_disp = "2. Display"
+extendOpen     = input.bool(true, "Extend open zones", group=gp_disp)
+showFilled     = input.bool(true, "Show filled zones", group=gp_disp)
+hideFilledBars = input.int(0, "Hide filled after bars (0 = disable)", minval=0, group=gp_disp)
+maxStored      = input.int(300, "Max stored zones", minval=10, maxval=500, group=gp_disp)
+
+// ==========================================
+// 3. Style
+// ==========================================
+gp_style = "3. Style"
+openAlpha   = input.int(46,  "Open zone opacity (0-255)",   minval=0, maxval=255, group=gp_style)
+filledAlpha = input.int(22,  "Filled zone opacity (0-255)", minval=0, maxval=255, group=gp_style)
+borderWidth = input.int(1,   "Border width", minval=1, maxval=5, group=gp_style)
+showMidline = input.bool(true, "Show midline", group=gp_style)
+labelMode   = input.string("Compact", "Label mode", options=["Off", "Compact", "Detailed"], group=gp_style)
+labelSize   = input.int(9,   "Label font size", minval=7, maxval=24, group=gp_style)
+
+// ==========================================
+// 4. Colors（ATAS 默认色）
+// ==========================================
+gp_colors = "4. Colors"
+gapUpColor   = input.color(#29C48E, "Gap up color", group=gp_colors)   // ATAS: 41,196,142
+gapDownColor = input.color(#EE5B5B, "Gap down color", group=gp_colors) // ATAS: 238,91,91
+textColor    = input.color(#EBEEF2, "Text color", group=gp_colors)     // ATAS: 235,238,242
+
+// ATAS alpha(0-255) → Pine transp(0-100)
+a2t(int a) => math.round(100 - a / 255 * 100)
+
+get_text_size(int sz) =>
+    sz <= 8  ? size.tiny   :
+     sz <= 11 ? size.small  :
+     sz <= 14 ? size.normal :
+     size.large
+
+type GapZone
+    box   b
+    line  mid
+    label lbl
+    float lower
+    float upper
+    float size
+    bool  isUp
+    int   startBar
+    int   fillBar
+
+var GapZone[] zones = array.new<GapZone>()
+
+float tick = syminfo.mintick
+float minSize = minGapTick * tick
+float maxSize = maxGapTick > 0 ? maxGapTick * tick : 1e18
+
+// ---------- 缺口创建：缺口在两棒之间，但当前棒阴阳随价格发展才定型（对齐 ATAS 逐 tick 判定） ----------
+bool prevBull = close[1] > open[1]
+bool curBull  = close > open
+bool prevBear = close[1] < open[1]
+bool curBear  = close < open
+
+var int createdBar = -1
+var float sig = 0.0
+sig := 0.0
+
+if createdBar != bar_index
+    bool isUp = false
+    bool isDn = false
+    float lo = na
+    float hi = na
+    if detMode == "Close to next open"
+        // ATAS 同向过滤：两根皆阳线才记上跳，皆阴线才记下跳
+        if prevBull and curBull and open > close[1]
+            isUp := true
+            lo := close[1]
+            hi := open
+        else if prevBear and curBear and open < close[1]
+            isDn := true
+            lo := open
+            hi := close[1]
+    else
+        if prevBull and curBull and low > high[1]
+            isUp := true
+            lo := high[1]
+            hi := low
+        else if prevBear and curBear and high < low[1]
+            isDn := true
+            lo := high
+            hi := low[1]
+    if (isUp or isDn)
+        float sz = hi - lo
+        if sz > 0 and sz >= minSize and sz <= maxSize
+            color base = isUp ? gapUpColor : gapDownColor
+            box bx = box.new(bar_index - 1, hi, bar_index, lo,
+                 bgcolor=color.new(base, a2t(openAlpha)),
+                 border_color=color.new(base, 20),   // ATAS open border alpha 205
+                 border_width=borderWidth)
+            line ml = na
+            if showMidline
+                ml := line.new(bar_index - 1, (hi + lo) / 2, bar_index, (hi + lo) / 2,
+                     color=color.new(base, 41),      // ATAS open midline alpha 150
+                     style=line.style_dotted, width=1)
+            label lb = na
+            if labelMode != "Off"
+                string t1 = isUp ? "UP" : "DN"
+                string t2 = labelMode == "Detailed" ? "GAP " + t1 + (detMode == "Wick to wick" ? " WICK " : " C/O ") + str.tostring(sz / tick, "#.#") + "t " + str.tostring(lo, format.mintick) + "-" + str.tostring(hi, format.mintick) + " open" : "GAP " + t1 + " " + str.tostring(sz / tick, "#.#") + "t open"
+                lb := label.new(bar_index, (hi + lo) / 2, t2,
+                     color=color.new(color.black, 100), textcolor=textColor,
+                     style=label.style_label_left, size=get_text_size(labelSize))
+            array.push(zones, GapZone.new(bx, ml, lb, lo, hi, sz, isUp, bar_index, na))
+            createdBar := bar_index
+            sig := isUp ? 1.0 : -1.0
+
+// ---------- 回补判定（ATAS：从缺口形成的下一根起，逐根检查；TickIntoGap=碰到带即算） ----------
+if array.size(zones) > 0
+    for i = array.size(zones) - 1 to 0
+        GapZone z = array.get(zones, i)
+        if na(z.fillBar) and bar_index > z.startBar
+            bool filled = false
+            if fillPolicy == "Touch into gap"
+                filled := high >= z.lower and low <= z.upper
+            else
+                filled := z.isUp ? low <= z.lower : high >= z.upper
+            if filled
+                z.fillBar := bar_index
+                color base = z.isUp ? gapUpColor : gapDownColor
+                if showFilled
+                    box.set_bgcolor(z.b, color.new(base, a2t(filledAlpha)))
+                    box.set_border_color(z.b, color.new(base, 51))  // ATAS filled border alpha 125
+                    box.set_border_style(z.b, line.style_dashed)
+                    box.set_right(z.b, bar_index)
+                    if not na(z.mid)
+                        line.set_x2(z.mid, bar_index)
+                        line.set_color(z.mid, color.new(base, 65))   // ATAS filled midline alpha 90
+                    if not na(z.lbl)
+                        label.set_x(z.lbl, bar_index)
+                        string t1 = z.isUp ? "UP" : "DN"
+                        string t2 = labelMode == "Detailed" ? "GAP " + t1 + (detMode == "Wick to wick" ? " WICK " : " C/O ") + str.tostring(z.size / tick, "#.#") + "t " + str.tostring(z.lower, format.mintick) + "-" + str.tostring(z.upper, format.mintick) + " filled@" + str.tostring(bar_index) : "GAP " + t1 + " " + str.tostring(z.size / tick, "#.#") + "t filled@" + str.tostring(bar_index)
+                        label.set_text(z.lbl, t2)
+                else
+                    box.delete(z.b)
+                    if not na(z.mid)
+                        line.delete(z.mid)
+                    if not na(z.lbl)
+                        label.delete(z.lbl)
+                    array.remove(zones, i)
+            else if extendOpen
+                box.set_right(z.b, bar_index)
+                if not na(z.mid)
+                    line.set_x2(z.mid, bar_index)
+                if not na(z.lbl)
+                    label.set_x(z.lbl, bar_index)
+        else if not na(z.fillBar)
+            // 已回补：超期隐藏
+            if showFilled and hideFilledBars > 0 and bar_index - z.fillBar > hideFilledBars
+                box.delete(z.b)
+                if not na(z.mid)
+                    line.delete(z.mid)
+                if not na(z.lbl)
+                    label.delete(z.lbl)
+                array.remove(zones, i)
+
+// ---------- 限制最大存储 ----------
+while array.size(zones) > maxStored
+    GapZone old = array.shift(zones)
+    box.delete(old.b)
+    if not na(old.mid)
+        line.delete(old.mid)
+    if not na(old.lbl)
+        label.delete(old.lbl)
+
+// ---------- 隐藏信号序列（ATAS：上跳 +1 / 下跳 -1；IgnoredByAlerts 同 ATAS，不供警报） ----------
+plot(sig, "Gap Zone Signal", display=display.none)
