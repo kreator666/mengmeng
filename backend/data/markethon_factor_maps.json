@@ -1,0 +1,112 @@
+[
+  {
+    "id": "63accdce-dd37-4e68-bf53-ea9d74d2b108",
+    "project_factor_id": "4dba29b8-3f43-408a-b1c4-00efa84dc890",
+    "project_factor_name": "自定义723",
+    "project_factor_mode": "python",
+    "qlib_expression": "($open - Ref($close, 1)) / Ref($close, 1)",
+    "markethon_name": "GAP723",
+    "created_at": "2026-08-22T11:41:06.492698+00:00",
+    "updated_at": "2026-08-22T15:59:50.116361+00:00"
+  },
+  {
+    "id": "122081bd-c079-40f7-98e6-b25894887793",
+    "project_factor_id": "ROC",
+    "project_factor_name": "ROC",
+    "project_factor_mode": "formula",
+    "qlib_expression": "($close - Ref($close, 5)) / Ref($close, 5)",
+    "markethon_name": "ROC_MKT",
+    "created_at": "2026-08-22T15:12:14.204607+00:00",
+    "updated_at": "2026-08-22T15:12:15.162658+00:00"
+  },
+  {
+    "id": "714f64d6-85f6-4c05-9352-4d40df4bd629",
+    "project_factor_id": "MOM",
+    "project_factor_name": "MOM",
+    "project_factor_mode": "formula",
+    "qlib_expression": "$close - Ref($close, 10)",
+    "markethon_name": "MOM_MKT",
+    "created_at": "2026-08-22T15:12:14.209988+00:00",
+    "updated_at": "2026-08-22T15:12:15.171448+00:00"
+  },
+  {
+    "id": "5052e14e-5b32-4bee-a6e7-7860c056ee5d",
+    "project_factor_id": "VOL_MA",
+    "project_factor_name": "VOL_MA",
+    "project_factor_mode": "formula",
+    "qlib_expression": "Mean($volume, 5)",
+    "markethon_name": "VOL_MA_MKT",
+    "created_at": "2026-08-22T15:12:14.217186+00:00",
+    "updated_at": "2026-08-22T15:12:15.171843+00:00"
+  },
+  {
+    "id": "9135b686-d23b-4317-a591-b22ab087a891",
+    "project_factor_id": "ZSCORE",
+    "project_factor_name": "ZSCORE",
+    "project_factor_mode": "formula",
+    "qlib_expression": "($close - Mean($close, 20)) / Std($close, 20)",
+    "markethon_name": "ZSCORE_MKT",
+    "created_at": "2026-08-22T15:12:14.221111+00:00",
+    "updated_at": "2026-08-22T15:12:15.176454+00:00"
+  },
+  {
+    "id": "b23745ea-447d-43bf-b570-34c75513e235",
+    "project_factor_id": "BOLL",
+    "project_factor_name": "BOLL",
+    "project_factor_mode": "formula",
+    "qlib_expression": "($close - Mean($close, 20)) / (Std($close, 20) * 2)",
+    "markethon_name": "BOLL_MKT",
+    "created_at": "2026-08-22T15:12:14.226744+00:00",
+    "updated_at": "2026-08-22T15:12:15.184049+00:00"
+  },
+  {
+    "id": "7a9c962a-5a1e-4523-a534-ed6ae28a619a",
+    "project_factor_id": "panic_bottom_custom",
+    "project_factor_name": "恐慌抄底因子",
+    "project_factor_mode": "python",
+    "qlib_expression": "($low - ($open + $close - Abs($open - $close)) / 2) / ($high - $low) * ($volume / Mean($volume, 5))",
+    "markethon_name": "PANIC_BUY",
+    "created_at": "2026-08-22T15:59:50.121223+00:00",
+    "updated_at": "2026-08-22T15:59:50.121223+00:00"
+  },
+  {
+    "id": "1801710f-899c-458f-9d91-2a81b95043ab",
+    "project_factor_id": "gate_scan_bottom_drop",
+    "project_factor_name": "Gate扫描-底部跌幅",
+    "project_factor_mode": "formula",
+    "qlib_expression": "($close - Max($close, 252)) / Max($close, 252)",
+    "markethon_name": "GATE_BOTTOM_DROP",
+    "created_at": "2026-08-22T15:59:50.124589+00:00",
+    "updated_at": "2026-08-22T15:59:50.124589+00:00"
+  },
+  {
+    "id": "9fbf86b9-336a-4b77-a5e0-3f057994d605",
+    "project_factor_id": "gate_scan_ma_diff",
+    "project_factor_name": "Gate扫描-均线离散",
+    "project_factor_mode": "formula",
+    "qlib_expression": "(Mean($close, 5) - Mean($close, 10)) * (Mean($close, 5) - Mean($close, 10)) + (Mean($close, 10) - Mean($close, 20)) * (Mean($close, 10) - Mean($close, 20))",
+    "markethon_name": "GATE_MA_DIFF",
+    "created_at": "2026-08-22T15:59:50.127504+00:00",
+    "updated_at": "2026-08-22T15:59:50.127504+00:00"
+  },
+  {
+    "id": "91977a9c-284f-4402-b5a8-cf2460d29ccb",
+    "project_factor_id": "gate_scan_trend_gain",
+    "project_factor_name": "Gate扫描-趋势涨幅",
+    "project_factor_mode": "formula",
+    "qlib_expression": "($close - Ref($close, 20)) / Ref($close, 20)",
+    "markethon_name": "GATE_TREND_GAIN",
+    "created_at": "2026-08-22T15:59:50.131648+00:00",
+    "updated_at": "2026-08-22T15:59:50.131648+00:00"
+  },
+  {
+    "id": "34fc573c-c165-47a4-a55f-62d1ad342371",
+    "project_factor_id": "gate_scan_volume_ratio",
+    "project_factor_name": "Gate扫描-量比",
+    "project_factor_mode": "formula",
+    "qlib_expression": "$volume / Mean($volume, 20)",
+    "markethon_name": "GATE_VOLUME_RATIO",
+    "created_at": "2026-08-22T15:59:50.131648+00:00",
+    "updated_at": "2026-08-22T15:59:50.131648+00:00"
+  }
+]

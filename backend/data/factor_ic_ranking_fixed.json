@@ -1,0 +1,685 @@
+{
+  "evaluated": 170,
+  "sorted": [
+    {
+      "name": "KLEN",
+      "ic_mean": -0.0596
+    },
+    {
+      "name": "MIN60",
+      "ic_mean": 0.0541
+    },
+    {
+      "name": "QTLD60",
+      "ic_mean": 0.0537
+    },
+    {
+      "name": "MIN30",
+      "ic_mean": 0.0504
+    },
+    {
+      "name": "MA60",
+      "ic_mean": 0.0489
+    },
+    {
+      "name": "GATE_MA_DIFF",
+      "ic_mean": -0.0486
+    },
+    {
+      "name": "LOW0",
+      "ic_mean": 0.0485
+    },
+    {
+      "name": "MIN5",
+      "ic_mean": 0.0478
+    },
+    {
+      "name": "MIN10",
+      "ic_mean": 0.0477
+    },
+    {
+      "name": "MIN20",
+      "ic_mean": 0.0476
+    },
+    {
+      "name": "QTLD30",
+      "ic_mean": 0.0466
+    },
+    {
+      "name": "ROC30",
+      "ic_mean": 0.0461
+    },
+    {
+      "name": "TEST_MA_DIFF",
+      "ic_mean": -0.0453
+    },
+    {
+      "name": "STD10",
+      "ic_mean": -0.045
+    },
+    {
+      "name": "QTLD20",
+      "ic_mean": 0.0433
+    },
+    {
+      "name": "STD5",
+      "ic_mean": -0.043
+    },
+    {
+      "name": "ROC60",
+      "ic_mean": 0.0429
+    },
+    {
+      "name": "MA30",
+      "ic_mean": 0.042
+    },
+    {
+      "name": "ROC20",
+      "ic_mean": 0.0405
+    },
+    {
+      "name": "GATE_TREND_GAIN",
+      "ic_mean": -0.0405
+    },
+    {
+      "name": "SUMD30",
+      "ic_mean": -0.0403
+    },
+    {
+      "name": "SUMN30",
+      "ic_mean": 0.0403
+    },
+    {
+      "name": "SUMP30",
+      "ic_mean": -0.0403
+    },
+    {
+      "name": "STD20",
+      "ic_mean": -0.0399
+    },
+    {
+      "name": "RANK60",
+      "ic_mean": -0.0398
+    },
+    {
+      "name": "SUMD60",
+      "ic_mean": -0.0393
+    },
+    {
+      "name": "SUMN60",
+      "ic_mean": 0.0393
+    },
+    {
+      "name": "SUMP60",
+      "ic_mean": -0.0393
+    },
+    {
+      "name": "KLOW",
+      "ic_mean": -0.0391
+    },
+    {
+      "name": "BETA30",
+      "ic_mean": -0.039
+    },
+    {
+      "name": "QTLU60",
+      "ic_mean": 0.0385
+    },
+    {
+      "name": "VMA60",
+      "ic_mean": 0.0378
+    },
+    {
+      "name": "BETA60",
+      "ic_mean": -0.037
+    },
+    {
+      "name": "VSUMN60",
+      "ic_mean": 0.037
+    },
+    {
+      "name": "VSUMP60",
+      "ic_mean": -0.037
+    },
+    {
+      "name": "VSUMD60",
+      "ic_mean": -0.037
+    },
+    {
+      "name": "QTLD10",
+      "ic_mean": 0.0367
+    },
+    {
+      "name": "CORR10",
+      "ic_mean": -0.0366
+    },
+    {
+      "name": "VOL_MA_MKT",
+      "ic_mean": -0.036
+    },
+    {
+      "name": "IMXD30",
+      "ic_mean": -0.0359
+    },
+    {
+      "name": "MA20",
+      "ic_mean": 0.0358
+    },
+    {
+      "name": "RSV60",
+      "ic_mean": -0.0357
+    },
+    {
+      "name": "CORR20",
+      "ic_mean": -0.0354
+    },
+    {
+      "name": "KUP",
+      "ic_mean": -0.0351
+    },
+    {
+      "name": "RANK30",
+      "ic_mean": -0.0346
+    },
+    {
+      "name": "CORD20",
+      "ic_mean": -0.0341
+    },
+    {
+      "name": "BETA20",
+      "ic_mean": -0.0337
+    },
+    {
+      "name": "STD30",
+      "ic_mean": -0.0335
+    },
+    {
+      "name": "IMAX30",
+      "ic_mean": -0.0334
+    },
+    {
+      "name": "CORD30",
+      "ic_mean": -0.0333
+    },
+    {
+      "name": "SUMN20",
+      "ic_mean": 0.0332
+    },
+    {
+      "name": "SUMD20",
+      "ic_mean": -0.0332
+    },
+    {
+      "name": "SUMP20",
+      "ic_mean": -0.0332
+    },
+    {
+      "name": "QTLD5",
+      "ic_mean": 0.0319
+    },
+    {
+      "name": "IMXD60",
+      "ic_mean": -0.0313
+    },
+    {
+      "name": "ROC10",
+      "ic_mean": 0.0313
+    },
+    {
+      "name": "BOLL_MKT",
+      "ic_mean": -0.0313
+    },
+    {
+      "name": "ZSCORE_MKT",
+      "ic_mean": -0.0313
+    },
+    {
+      "name": "QTLU30",
+      "ic_mean": 0.0311
+    },
+    {
+      "name": "RANK20",
+      "ic_mean": -0.0309
+    },
+    {
+      "name": "CORD10",
+      "ic_mean": -0.0308
+    },
+    {
+      "name": "IMXD20",
+      "ic_mean": -0.0306
+    },
+    {
+      "name": "VSUMD30",
+      "ic_mean": -0.0306
+    },
+    {
+      "name": "VSUMP30",
+      "ic_mean": -0.0306
+    },
+    {
+      "name": "VSUMN30",
+      "ic_mean": 0.0306
+    },
+    {
+      "name": "CORR5",
+      "ic_mean": -0.0305
+    },
+    {
+      "name": "VSTD60",
+      "ic_mean": 0.03
+    },
+    {
+      "name": "IMIN60",
+      "ic_mean": 0.0296
+    },
+    {
+      "name": "CORD60",
+      "ic_mean": -0.0293
+    },
+    {
+      "name": "CNTP30",
+      "ic_mean": -0.0288
+    },
+    {
+      "name": "CNTP60",
+      "ic_mean": -0.0282
+    },
+    {
+      "name": "IMAX20",
+      "ic_mean": -0.0282
+    },
+    {
+      "name": "IMIN30",
+      "ic_mean": 0.0279
+    },
+    {
+      "name": "RSV30",
+      "ic_mean": -0.0278
+    },
+    {
+      "name": "MOM_MKT",
+      "ic_mean": -0.0278
+    },
+    {
+      "name": "HIGH0",
+      "ic_mean": -0.0275
+    },
+    {
+      "name": "CORD5",
+      "ic_mean": -0.0268
+    },
+    {
+      "name": "VMA30",
+      "ic_mean": 0.0267
+    },
+    {
+      "name": "STD60",
+      "ic_mean": -0.0262
+    },
+    {
+      "name": "SUMD10",
+      "ic_mean": -0.026
+    },
+    {
+      "name": "SUMN10",
+      "ic_mean": 0.026
+    },
+    {
+      "name": "SUMP10",
+      "ic_mean": -0.026
+    },
+    {
+      "name": "MA10",
+      "ic_mean": 0.0259
+    },
+    {
+      "name": "BETA10",
+      "ic_mean": -0.0258
+    },
+    {
+      "name": "RANK10",
+      "ic_mean": -0.0254
+    },
+    {
+      "name": "CORR30",
+      "ic_mean": -0.0253
+    },
+    {
+      "name": "MAX5",
+      "ic_mean": -0.0253
+    },
+    {
+      "name": "QTLU20",
+      "ic_mean": 0.0249
+    },
+    {
+      "name": "ROC5",
+      "ic_mean": 0.0245
+    },
+    {
+      "name": "ROC_MKT",
+      "ic_mean": -0.0245
+    },
+    {
+      "name": "IMAX60",
+      "ic_mean": -0.0239
+    },
+    {
+      "name": "CNTP20",
+      "ic_mean": -0.0237
+    },
+    {
+      "name": "IMIN20",
+      "ic_mean": 0.0237
+    },
+    {
+      "name": "VSUMD20",
+      "ic_mean": -0.0237
+    },
+    {
+      "name": "VSUMN20",
+      "ic_mean": 0.0237
+    },
+    {
+      "name": "VSUMP20",
+      "ic_mean": -0.0237
+    },
+    {
+      "name": "IMXD10",
+      "ic_mean": -0.0234
+    },
+    {
+      "name": "CNTP10",
+      "ic_mean": -0.0224
+    },
+    {
+      "name": "RESI60",
+      "ic_mean": -0.0224
+    },
+    {
+      "name": "RSV20",
+      "ic_mean": -0.0223
+    },
+    {
+      "name": "CNTD30",
+      "ic_mean": -0.0216
+    },
+    {
+      "name": "VMA20",
+      "ic_mean": 0.0213
+    },
+    {
+      "name": "GATE_VOLUME_RATIO",
+      "ic_mean": -0.0213
+    },
+    {
+      "name": "CNTP5",
+      "ic_mean": -0.0212
+    },
+    {
+      "name": "RANK5",
+      "ic_mean": -0.0212
+    },
+    {
+      "name": "SUMD5",
+      "ic_mean": -0.0211
+    },
+    {
+      "name": "SUMN5",
+      "ic_mean": 0.0211
+    },
+    {
+      "name": "SUMP5",
+      "ic_mean": -0.0211
+    },
+    {
+      "name": "BETA5",
+      "ic_mean": -0.0206
+    },
+    {
+      "name": "IMAX10",
+      "ic_mean": -0.0206
+    },
+    {
+      "name": "MA5",
+      "ic_mean": 0.0203
+    },
+    {
+      "name": "IMIN10",
+      "ic_mean": 0.0198
+    },
+    {
+      "name": "CNTD60",
+      "ic_mean": -0.0196
+    },
+    {
+      "name": "MAX10",
+      "ic_mean": -0.0193
+    },
+    {
+      "name": "VWAP0",
+      "ic_mean": 0.0191
+    },
+    {
+      "name": "KMID",
+      "ic_mean": -0.019
+    },
+    {
+      "name": "OPEN0",
+      "ic_mean": 0.019
+    },
+    {
+      "name": "IMXD5",
+      "ic_mean": -0.0181
+    },
+    {
+      "name": "VSUMD10",
+      "ic_mean": -0.0179
+    },
+    {
+      "name": "VSUMP10",
+      "ic_mean": -0.0179
+    },
+    {
+      "name": "VSUMN10",
+      "ic_mean": 0.0179
+    },
+    {
+      "name": "CNTD5",
+      "ic_mean": -0.0177
+    },
+    {
+      "name": "CNTD10",
+      "ic_mean": -0.0174
+    },
+    {
+      "name": "CNTD20",
+      "ic_mean": -0.0172
+    },
+    {
+      "name": "RSV10",
+      "ic_mean": -0.0172
+    },
+    {
+      "name": "IMAX5",
+      "ic_mean": -0.0165
+    },
+    {
+      "name": "KMID2",
+      "ic_mean": -0.0165
+    },
+    {
+      "name": "GAP723",
+      "ic_mean": 0.0164
+    },
+    {
+      "name": "IMIN5",
+      "ic_mean": 0.0159
+    },
+    {
+      "name": "VMA10",
+      "ic_mean": 0.0158
+    },
+    {
+      "name": "KSFT",
+      "ic_mean": -0.015
+    },
+    {
+      "name": "KSFT2",
+      "ic_mean": -0.0147
+    },
+    {
+      "name": "VSUMN5",
+      "ic_mean": 0.0146
+    },
+    {
+      "name": "VSUMP5",
+      "ic_mean": -0.0146
+    },
+    {
+      "name": "VSUMD5",
+      "ic_mean": -0.0146
+    },
+    {
+      "name": "RSV5",
+      "ic_mean": -0.0142
+    },
+    {
+      "name": "QTLU10",
+      "ic_mean": 0.014
+    },
+    {
+      "name": "CNTN5",
+      "ic_mean": 0.0139
+    },
+    {
+      "name": "GATE_BOTTOM_DROP",
+      "ic_mean": -0.0137
+    },
+    {
+      "name": "CNTN30",
+      "ic_mean": 0.0136
+    },
+    {
+      "name": "CNTN10",
+      "ic_mean": 0.0125
+    },
+    {
+      "name": "VMA5",
+      "ic_mean": 0.0124
+    },
+    {
+      "name": "VSTD5",
+      "ic_mean": -0.0115
+    },
+    {
+      "name": "VSTD30",
+      "ic_mean": 0.0115
+    },
+    {
+      "name": "CNTN20",
+      "ic_mean": 0.0106
+    },
+    {
+      "name": "MAX20",
+      "ic_mean": -0.0102
+    },
+    {
+      "name": "RSQR30",
+      "ic_mean": 0.0102
+    },
+    {
+      "name": "WVMA30",
+      "ic_mean": -0.0094
+    },
+    {
+      "name": "RESI10",
+      "ic_mean": -0.0092
+    },
+    {
+      "name": "WVMA10",
+      "ic_mean": -0.0088
+    },
+    {
+      "name": "WVMA20",
+      "ic_mean": -0.0087
+    },
+    {
+      "name": "PANIC_BUY",
+      "ic_mean": 0.0087
+    },
+    {
+      "name": "CNTN60",
+      "ic_mean": 0.0086
+    },
+    {
+      "name": "RESI30",
+      "ic_mean": -0.0083
+    },
+    {
+      "name": "CORR60",
+      "ic_mean": -0.0079
+    },
+    {
+      "name": "RESI5",
+      "ic_mean": -0.0078
+    },
+    {
+      "name": "QTLU5",
+      "ic_mean": 0.0078
+    },
+    {
+      "name": "MAX60",
+      "ic_mean": 0.0077
+    },
+    {
+      "name": "RESI20",
+      "ic_mean": -0.0077
+    },
+    {
+      "name": "WVMA5",
+      "ic_mean": -0.0066
+    },
+    {
+      "name": "VSTD10",
+      "ic_mean": -0.0061
+    },
+    {
+      "name": "RSQR60",
+      "ic_mean": 0.006
+    },
+    {
+      "name": "KUP2",
+      "ic_mean": -0.0052
+    },
+    {
+      "name": "KLOW2",
+      "ic_mean": -0.0052
+    },
+    {
+      "name": "RSQR20",
+      "ic_mean": 0.0046
+    },
+    {
+      "name": "VSTD20",
+      "ic_mean": 0.0033
+    },
+    {
+      "name": "MAX30",
+      "ic_mean": -0.0028
+    },
+    {
+      "name": "RSQR5",
+      "ic_mean": 0.0021
+    },
+    {
+      "name": "WVMA60",
+      "ic_mean": -0.0007
+    },
+    {
+      "name": "RSQR10",
+      "ic_mean": -0.0001
+    }
+  ]
+}

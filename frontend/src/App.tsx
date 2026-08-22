@@ -6,6 +6,7 @@ import StrategyList from './pages/StrategyList';
 import FactorLibrary from './pages/FactorLibrary';
 import SupportLevel from './pages/SupportLevel';
 import ChainSentinel from './pages/ChainSentinel';
+import Competition from './pages/Competition';
 
 const { Header, Content } = Layout;
 
@@ -16,6 +17,7 @@ function App() {
     { key: 'factors', label: <Link to="/factors">因子库</Link> },
     { key: 'support', label: <Link to="/support-level">支撑位分析</Link> },
     { key: 'chain-sentinel', label: <Link to="/chain-sentinel">链风险哨兵</Link> },
+    { key: 'competition', label: <Link to="/competition">比赛天梯</Link> },
   ];
 
   return (
@@ -35,6 +37,7 @@ function App() {
             <Route path="/factors" element={<FactorLibrary />} />
             <Route path="/support-level" element={<SupportLevel />} />
             <Route path="/chain-sentinel" element={<ChainSentinel />} />
+            <Route path="/competition" element={<Competition />} />
           </Routes>
         </Content>
       </Layout>
