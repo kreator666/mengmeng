@@ -1,0 +1,82 @@
+{
+  "candidates": [
+    {
+      "note": "v47_06_klow_cord30",
+      "desc": "47.06 基准，CNTN30->KLOW, BETA60->CORD30；实测 45.53（更差，KLOW/CORD30 与现有因子重叠）",
+      "names": [
+        "GAP723", "PANIC_BUY",
+        "QTLD60", "LOW0", "ROC60", "VSUMP60", "KLOW", "QTLU30",
+        "MIN20", "MIN30",
+        "CORR10", "KLEN",
+        "MIN5", "MIN10", "MIN60",
+        "VSUMN60", "MA60", "CORD20", "STD10",
+        "IMIN60", "VMA60", "RSV60", "SUMN30", "CORD30"
+      ]
+    },
+    {
+      "note": "v47_06_kup",
+      "desc": "47.06，CNTN30->KUP（上影线 K 线，单因子替换测试）",
+      "names": [
+        "GAP723", "PANIC_BUY",
+        "QTLD60", "LOW0", "ROC60", "VSUMP60", "KUP", "QTLU30",
+        "MIN20", "MIN30",
+        "CORR10", "KLEN",
+        "MIN5", "MIN10", "MIN60",
+        "VSUMN60", "MA60", "CORD20", "STD10",
+        "IMIN60", "VMA60", "RSV60", "SUMN30", "BETA60"
+      ]
+    },
+    {
+      "note": "v47_06_b60_vstd60",
+      "desc": "47.06，BETA60->VSTD60（波动率因子，单因子替换）",
+      "names": [
+        "GAP723", "PANIC_BUY",
+        "QTLD60", "LOW0", "ROC60", "VSUMP60", "CNTN30", "QTLU30",
+        "MIN20", "MIN30",
+        "CORR10", "KLEN",
+        "MIN5", "MIN10", "MIN60",
+        "VSUMN60", "MA60", "CORD20", "STD10",
+        "IMIN60", "VMA60", "RSV60", "SUMN30", "VSTD60"
+      ]
+    },
+    {
+      "note": "v47_06_b60_volmamkt",
+      "desc": "47.06，BETA60->VOL_MA_MKT（成交量均线，单因子替换）",
+      "names": [
+        "GAP723", "PANIC_BUY",
+        "QTLD60", "LOW0", "ROC60", "VSUMP60", "CNTN30", "QTLU30",
+        "MIN20", "MIN30",
+        "CORR10", "KLEN",
+        "MIN5", "MIN10", "MIN60",
+        "VSUMN60", "MA60", "CORD20", "STD10",
+        "IMIN60", "VMA60", "RSV60", "SUMN30", "VOL_MA_MKT"
+      ]
+    },
+    {
+      "note": "v47_06_qtlu_qtld30",
+      "desc": "47.06，QTLU30->QTLD30（分位数下沿，单因子替换）",
+      "names": [
+        "GAP723", "PANIC_BUY",
+        "QTLD60", "LOW0", "ROC60", "VSUMP60", "CNTN30", "QTLD30",
+        "MIN20", "MIN30",
+        "CORR10", "KLEN",
+        "MIN5", "MIN10", "MIN60",
+        "VSUMN60", "MA60", "CORD20", "STD10",
+        "IMIN60", "VMA60", "RSV60", "SUMN30", "BETA60"
+      ]
+    },
+    {
+      "note": "v47_06_rsv_vsumd60",
+      "desc": "47.06，RSV60->VSUMD60（成交量差分，单因子替换）",
+      "names": [
+        "GAP723", "PANIC_BUY",
+        "QTLD60", "LOW0", "ROC60", "VSUMP60", "CNTN30", "QTLU30",
+        "MIN20", "MIN30",
+        "CORR10", "KLEN",
+        "MIN5", "MIN10", "MIN60",
+        "VSUMN60", "MA60", "CORD20", "STD10",
+        "IMIN60", "VMA60", "VSUMD60", "SUMN30", "BETA60"
+      ]
+    }
+  ]
+}

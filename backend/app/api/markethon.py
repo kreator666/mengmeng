@@ -559,6 +559,9 @@ class SubmitLeaderboardRequest(BaseModel):
 @router.post("/scores/submit")
 async def submit_leaderboard_score(body: SubmitLeaderboardRequest) -> dict[str, Any]:
     """天梯成绩正式提交。"""
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.warning(f"[/scores/submit] request names={body.names} key={body.submission_key}")
     client = get_markethon_client()
     try:
         return await client.submit_leaderboard_score(
@@ -585,3 +588,7 @@ async def submit_leaderboard_score(body: SubmitLeaderboardRequest) -> dict[str, 
         )
     except MarkethonError as e:
         _handle_markethon_error(e)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"天梯提交内部错误: {type(e).__name__}: {e}")

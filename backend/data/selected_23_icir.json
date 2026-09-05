@@ -1,0 +1,190 @@
+{
+  "names": [
+    "CORR10",
+    "LOW0",
+    "CORR5",
+    "KLOW",
+    "CORR20",
+    "CORD20",
+    "KLEN",
+    "MIN5",
+    "VSUMN60",
+    "VSUMP60",
+    "VMA60",
+    "QTLD60",
+    "MA60",
+    "ROC30",
+    "SUMD30",
+    "STD5",
+    "RANK60",
+    "TEST_MA_DIFF",
+    "BETA30",
+    "CNTP30",
+    "RSV60",
+    "RESI60",
+    "VWAP0"
+  ],
+  "factors": [
+    {
+      "name": "CORR10",
+      "ic": -0.0366,
+      "icir": -0.3623,
+      "abs_ic": 0.0366,
+      "abs_icir": 0.3623
+    },
+    {
+      "name": "LOW0",
+      "ic": 0.0485,
+      "icir": 0.343,
+      "abs_ic": 0.0485,
+      "abs_icir": 0.343
+    },
+    {
+      "name": "CORR5",
+      "ic": -0.0305,
+      "icir": -0.3361,
+      "abs_ic": 0.0305,
+      "abs_icir": 0.3361
+    },
+    {
+      "name": "KLOW",
+      "ic": -0.0391,
+      "icir": -0.3345,
+      "abs_ic": 0.0391,
+      "abs_icir": 0.3345
+    },
+    {
+      "name": "CORR20",
+      "ic": -0.0354,
+      "icir": -0.3277,
+      "abs_ic": 0.0354,
+      "abs_icir": 0.3277
+    },
+    {
+      "name": "CORD20",
+      "ic": -0.0341,
+      "icir": -0.3273,
+      "abs_ic": 0.0341,
+      "abs_icir": 0.3273
+    },
+    {
+      "name": "KLEN",
+      "ic": -0.0596,
+      "icir": -0.3259,
+      "abs_ic": 0.0596,
+      "abs_icir": 0.3259
+    },
+    {
+      "name": "MIN5",
+      "ic": 0.0478,
+      "icir": 0.3229,
+      "abs_ic": 0.0478,
+      "abs_icir": 0.3229
+    },
+    {
+      "name": "VSUMN60",
+      "ic": 0.037,
+      "icir": 0.322,
+      "abs_ic": 0.037,
+      "abs_icir": 0.322
+    },
+    {
+      "name": "VSUMP60",
+      "ic": -0.037,
+      "icir": -0.322,
+      "abs_ic": 0.037,
+      "abs_icir": 0.322
+    },
+    {
+      "name": "VMA60",
+      "ic": 0.0378,
+      "icir": 0.3146,
+      "abs_ic": 0.0378,
+      "abs_icir": 0.3146
+    },
+    {
+      "name": "QTLD60",
+      "ic": 0.0537,
+      "icir": 0.3089,
+      "abs_ic": 0.0537,
+      "abs_icir": 0.3089
+    },
+    {
+      "name": "MA60",
+      "ic": 0.0489,
+      "icir": 0.2702,
+      "abs_ic": 0.0489,
+      "abs_icir": 0.2702
+    },
+    {
+      "name": "ROC30",
+      "ic": 0.0461,
+      "icir": 0.2609,
+      "abs_ic": 0.0461,
+      "abs_icir": 0.2609
+    },
+    {
+      "name": "SUMD30",
+      "ic": -0.0403,
+      "icir": -0.2467,
+      "abs_ic": 0.0403,
+      "abs_icir": 0.2467
+    },
+    {
+      "name": "STD5",
+      "ic": -0.043,
+      "icir": -0.2466,
+      "abs_ic": 0.043,
+      "abs_icir": 0.2466
+    },
+    {
+      "name": "RANK60",
+      "ic": -0.0398,
+      "icir": -0.2447,
+      "abs_ic": 0.0398,
+      "abs_icir": 0.2447
+    },
+    {
+      "name": "TEST_MA_DIFF",
+      "ic": -0.0453,
+      "icir": -0.2421,
+      "abs_ic": 0.0453,
+      "abs_icir": 0.2421
+    },
+    {
+      "name": "BETA30",
+      "ic": -0.039,
+      "icir": -0.2224,
+      "abs_ic": 0.039,
+      "abs_icir": 0.2224
+    },
+    {
+      "name": "CNTP30",
+      "ic": -0.0288,
+      "icir": -0.2162,
+      "abs_ic": 0.0288,
+      "abs_icir": 0.2162
+    },
+    {
+      "name": "RSV60",
+      "ic": -0.0357,
+      "icir": -0.2144,
+      "abs_ic": 0.0357,
+      "abs_icir": 0.2144
+    },
+    {
+      "name": "RESI60",
+      "ic": -0.0224,
+      "icir": -0.1375,
+      "abs_ic": 0.0224,
+      "abs_icir": 0.1375
+    },
+    {
+      "name": "VWAP0",
+      "ic": 0.0191,
+      "icir": 0.1232,
+      "abs_ic": 0.0191,
+      "abs_icir": 0.1232
+    }
+  ]
+}

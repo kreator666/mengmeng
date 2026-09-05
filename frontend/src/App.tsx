@@ -7,6 +7,7 @@ import FactorLibrary from './pages/FactorLibrary';
 import SupportLevel from './pages/SupportLevel';
 import ChainSentinel from './pages/ChainSentinel';
 import Competition from './pages/Competition';
+import BottomTrendScanner from './pages/BottomTrendScanner';
 
 const { Header, Content } = Layout;
 
@@ -18,6 +19,7 @@ function App() {
     { key: 'support', label: <Link to="/support-level">支撑位分析</Link> },
     { key: 'chain-sentinel', label: <Link to="/chain-sentinel">链风险哨兵</Link> },
     { key: 'competition', label: <Link to="/competition">比赛天梯</Link> },
+    { key: 'scanner', label: <Link to="/scanner">底部趋势扫描</Link> },
   ];
 
   return (
@@ -38,6 +40,7 @@ function App() {
             <Route path="/support-level" element={<SupportLevel />} />
             <Route path="/chain-sentinel" element={<ChainSentinel />} />
             <Route path="/competition" element={<Competition />} />
+            <Route path="/scanner" element={<BottomTrendScanner />} />
           </Routes>
         </Content>
       </Layout>
