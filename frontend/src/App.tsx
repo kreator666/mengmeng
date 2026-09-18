@@ -8,6 +8,7 @@ import SupportLevel from './pages/SupportLevel';
 import ChainSentinel from './pages/ChainSentinel';
 import Competition from './pages/Competition';
 import BottomTrendScanner from './pages/BottomTrendScanner';
+import V11Scanner from './pages/V11Scanner';
 
 const { Header, Content } = Layout;
 
@@ -20,6 +21,7 @@ function App() {
     { key: 'chain-sentinel', label: <Link to="/chain-sentinel">链风险哨兵</Link> },
     { key: 'competition', label: <Link to="/competition">比赛天梯</Link> },
     { key: 'scanner', label: <Link to="/scanner">底部趋势扫描</Link> },
+    { key: 'v11-scanner', label: <Link to="/v11-scanner">V11 策略扫描</Link> },
   ];
 
   return (
@@ -41,6 +43,7 @@ function App() {
             <Route path="/chain-sentinel" element={<ChainSentinel />} />
             <Route path="/competition" element={<Competition />} />
             <Route path="/scanner" element={<BottomTrendScanner />} />
+            <Route path="/v11-scanner" element={<V11Scanner />} />
           </Routes>
         </Content>
       </Layout>

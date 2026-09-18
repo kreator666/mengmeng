@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.api import backtest, bottom_trend_scanner, chain_sentinel, data, factor, fib_levels, markethon, strategy, support_level
+from app.api import backtest, bottom_trend_scanner, chain_sentinel, data, factor, fib_levels, markethon, strategy, support_level, v11_strategy_scanner
 from app.api.factor import custom_factor_router
 
 
@@ -75,6 +75,7 @@ app.include_router(fib_levels.router)
 app.include_router(chain_sentinel.router)
 app.include_router(markethon.router)
 app.include_router(bottom_trend_scanner.router)
+app.include_router(v11_strategy_scanner.router)
 
 
 @app.get("/health")
