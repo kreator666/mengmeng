@@ -105,17 +105,14 @@ docker image prune -f          # 清 dangling 镜像
 docker builder prune -f        # 清构建缓存
 ```
 
-## 7. HTTPS 证书（DNS 生效后执行一次）
+## 7. HTTPS 证书（已于 2026-09-18 签发）
 
-现有 `/etc/nginx/ssl/freetoken.crt` **不是通配证书**（仅 freetoken.xin / www.freetoken.xin），`quant.freetoken.xin` 需要单独签发：
+现有 `/etc/nginx/ssl/freetoken.crt` **不是通配证书**（仅 freetoken.xin / www.freetoken.xin），`quant.freetoken.xin` 使用 certbot 单独签发的 Let's Encrypt 证书：
 
-```bash
-# 前提：DNS 已添加 quant A 记录指向 47.253.171.222
-sudo certbot certonly --webroot -w /home/admin/certbot -d quant.freetoken.xin
-# 然后在 /etc/nginx/conf.d/quant.conf 中增加 443 server 块，
-# 证书路径为 /etc/letsencrypt/live/quant.freetoken.xin/{fullchain,privkey}.pem
-sudo nginx -t && sudo systemctl reload nginx
-```
+- 证书路径：`/etc/letsencrypt/live/quant.freetoken.xin/{fullchain,privkey}.pem`
+- 签发命令：`sudo certbot certonly --webroot -w /home/admin/certbot -d quant.freetoken.xin`
+- 当前证书 2026-12-17 到期，**certbot 已配置定时任务自动续期**，无需手动干预
+- 续期依赖 nginx 80 端口 server 块中的 `/.well-known/acme-challenge/` location，改动 `quant.conf` 时不要删掉
 
 ## 8. 踩坑记录（2026-09-18 首次部署）
 
